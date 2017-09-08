@@ -14,8 +14,12 @@ static matrix_t* create_random_matrix(const size_t rows, const size_t cols)
 {
 	size_t x;
 	size_t y;
-	matrix_t* m = malloc(sizeof(*m));
-	matrix_t_init(m, rows, cols);
+	matrix_t* m = matrix_t_alloc(rows, cols);
+
+	if (!m)
+	{
+		return NULL;
+	}
 
 	for (x = 0; x < cols; ++x)
 	{
@@ -66,13 +70,15 @@ static int matrix_equals(const matrix_t const* a, const matrix_t const* b)
 int main() {
 	size_t start_time;
 	size_t end_time;
+	matrix_t* a;
+	matrix_t* b;
 	matrix_t* ab1;
 	matrix_t* ab2;
 
 	srand((unsigned int)time(NULL));
 
-	matrix_t* a = create_random_matrix(500, 500);
-	matrix_t* b = create_random_matrix(500, 500);
+	a = create_random_matrix(500, 500);
+	b = matrix_t_copy(a);
 
 	start_time = get_milliseconds();
 	ab1 = matrix_t_multiply(a, b);
@@ -90,6 +96,11 @@ int main() {
 		end_time - start_time);
 
 	printf("Algorithms agree: %d\n", matrix_equals(ab1, ab2));
+
+	matrix_t_free(a);
+	matrix_t_free(b);
+	matrix_t_free(ab1);
+	matrix_t_free(ab2);
 
 #ifdef _WIN32
 	Sleep(5000);
