@@ -9,10 +9,12 @@ typedef struct matrix_t {
 	double* m_data;
 } matrix_t;
 
-void      matrix_t_init(matrix_t* matrix, size_t rows, size_t cols);
-void      matrix_t_free(matrix_t* matrix);
-double    matrix_t_get(matrix_t* matrix, size_t x, size_t y);
-void      matrix_t_set(matrix_t* matrix, size_t x, size_t y, double value);
-matrix_t* matrix_t_copy(matrix_t* matrix);
+matrix_t* matrix_t_alloc (const size_t rows, const size_t cols);
+void      matrix_t_init  (matrix_t* matrix, size_t rows, size_t cols);
+void      matrix_t_clear (matrix_t const* matrix);
+void      matrix_t_free  (matrix_t* matrix);
+double    matrix_t_get   (matrix_t* matrix, size_t x, size_t y);
+void      matrix_t_set   (matrix_t* matrix, size_t x, size_t y, double value);
+matrix_t* matrix_t_copy  (matrix_t* matrix);
 
 #endif /* NET_CODERODDE_LINEAR_ALGEBRA_MATRIX_H */#pragma once

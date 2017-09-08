@@ -8,8 +8,14 @@
 #include <unistd.h>
 #endif
 
-#define MAX(x,y) (((x) > (y)) ? (x) : (y))
-#define MIN(x,y) (((x) < (y)) ? (x) : (y))
+static size_t max_size_t(size_t x, size_t y)
+{
+	return x > y ? x : y;
+}
+static size_t min_size_t(size_t x, size_t y)
+{
+	return x < y ? x : y;
+}
 
 size_t get_number_of_processors()
 {
@@ -117,28 +123,37 @@ matrix_t* matrix_t_multiply_parallel(matrix_t* left_matrix,
 	size_t num_threads;
 	size_t basic_rows_per_thread;
 	thread_info* thread_info_structs;
-	matrix_t* result_matrix = malloc(sizeof(*result_matrix));
-
-	matrix_t_init(result_matrix,
-		left_matrix->m_rows,
-		right_matrix->m_cols);
+	matrix_t* result_matrix;
 
 	work_load = left_matrix->m_rows *
 		right_matrix->m_cols *
 		right_matrix->m_rows;
 
 	num_threads = get_number_of_processors();
-	num_threads = MIN(num_threads, work_load / MINIMUM_THREAD_LOAD);
-	num_threads = MIN(num_threads, left_matrix->m_rows);
-	num_threads = MAX(num_threads, 1);
+	num_threads = min_size_t(num_threads, work_load / MINIMUM_THREAD_LOAD);
+	num_threads = min_size_t(num_threads, left_matrix->m_rows);
+	num_threads = max_size_t(num_threads, 1);
 
 	if (num_threads == 1)
 	{
 		return matrix_t_multiply(left_matrix, right_matrix);
 	}
 
+	result_matrix = matrix_t_alloc(left_matrix->m_rows, right_matrix->m_cols);
+
+	if (!result_matrix)
+	{
+		return NULL;
+	}
+
 	basic_rows_per_thread = left_matrix->m_rows / num_threads;
 	thread_info_structs = calloc(num_threads, sizeof(thread_info));
+
+	if (!thread_info_structs)
+	{
+		matrix_t_free(result_matrix);
+		return NULL;
+	}
 
 	for (i = 0, rows_reserved = 0;
 		i != num_threads;
@@ -151,6 +166,7 @@ matrix_t* matrix_t_multiply_parallel(matrix_t* left_matrix,
 		thread_info_structs[i].start_row = rows_reserved;
 	}
 
+	/* Last thread function will be run in current thread: */
 	thread_info_structs[num_threads - 1].rows +=
 		left_matrix->m_rows % basic_rows_per_thread;
 

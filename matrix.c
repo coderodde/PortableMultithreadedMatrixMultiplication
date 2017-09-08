@@ -7,18 +7,53 @@ static size_t data_index(matrix_t* matrix, size_t x, size_t y)
 	return y * matrix->m_cols + x;
 }
 
-void matrix_t_init(matrix_t* matrix, size_t rows, size_t cols)
+matrix_t* matrix_t_alloc(size_t rows, size_t cols)
 {
-	matrix->m_rows = rows;
-	matrix->m_cols = cols;
-	matrix->m_data = malloc(sizeof(double) * rows * cols);
+	matrix_t* m = malloc(sizeof *m);
+
+	if (!m)
+	{
+		return m;
+	}
+
+	matrix_t_init(m, rows, cols);
+
+	if (!m->m_data)
+	{
+		free(m);
+		return NULL;
+	}
+
+	return m;
 }
 
-void matrix_t_free(matrix_t* matrix)
+void matrix_t_init(matrix_t* matrix, size_t rows, size_t cols)
+{
+	matrix->m_data = malloc(sizeof *matrix->m_data * rows * cols);
+
+	if (matrix->m_data)
+	{
+		matrix->m_rows = rows;
+		matrix->m_cols = cols;
+	}
+	else
+	{
+		matrix->m_rows = 0;
+		matrix->m_cols = 0;
+	}
+}
+
+void matrix_t_clear(matrix_t* matrix)
 {
 	free(matrix->m_data);
 	matrix->m_rows = 0;
 	matrix->m_cols = 0;
+}
+
+void matrix_t_free(matrix_t* matrix)
+{
+	matrix_t_clear(matrix);
+	free(matrix);
 }
 
 double matrix_t_get(matrix_t* matrix, size_t x, size_t y)

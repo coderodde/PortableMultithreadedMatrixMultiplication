@@ -10,7 +10,7 @@
 #include <windows.h>
 #endif
 
-static matrix_t* create_random_matrix(size_t rows, size_t cols)
+static matrix_t* create_random_matrix(const size_t rows, const size_t cols)
 {
 	size_t x;
 	size_t y;
@@ -39,7 +39,7 @@ static size_t get_milliseconds()
 #endif
 }
 
-static int matrix_equals(matrix_t* a, matrix_t* b)
+static int matrix_equals(const matrix_t const* a, const matrix_t const* b)
 {
 	size_t x;
 	size_t y;
