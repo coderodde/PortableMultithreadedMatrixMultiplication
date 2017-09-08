@@ -1,0 +1,5 @@
+﻿cl : Command line warning D9025: overriding '/sdl' with '/GS-'
+  main.c
+c:\users\rodion efremov\source\repos\multithreadedmatrixmultiplier\multithreadedmatrixmultiplier\main.c(72): warning C4013: 'time' undefined; assuming extern returning int
+  MultithreadedMatrixMultiplier.vcxproj -> C:\Users\Rodion Efremov\source\repos\MultithreadedMatrixMultiplier\Debug\MultithreadedMatrixMultiplier.exe
+  MultithreadedMatrixMultiplier.vcxproj -> C:\Users\Rodion Efremov\source\repos\MultithreadedMatrixMultiplier\Debug\MultithreadedMatrixMultiplier.pdb (Partial PDB)
